@@ -56,25 +56,10 @@ def count_clicks(token, short_url):
     return link_stats[0].get('views', 0) if link_stats else 0
 
 
-def is_vk_short_url(token, url):
-    parsed_url = urlparse(url)
-    if parsed_url.netloc != 'vk.cc':
-        return False
-    
-    try:
-        count_clicks(token, url)
-        return True
-    except VKError:
-        return False
-
-
 def process_url(vk_token, user_url):
     if not user_url:
         print("Ошибка: Пустой ввод")
         return
-    
-    if not user_url.startswith(('http://', 'https://')):
-        user_url = 'https://' + user_url
     
     parsed_url = urlparse(user_url)
     if not all([parsed_url.scheme, parsed_url.netloc]):
@@ -82,7 +67,7 @@ def process_url(vk_token, user_url):
         return
     
     try:
-        if is_vk_short_url(vk_token, user_url):
+        if parsed_url.netloc == 'vk.cc':
             click_count = count_clicks(vk_token, user_url)
             print(f"По вашей ссылке перешли {click_count} раз")
         else:
